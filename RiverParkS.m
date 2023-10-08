@@ -34,8 +34,10 @@ for i = 1:12
     Species{:,i} = SpeciesArray(MonthArray == i); % Sort species data by month
 end
 
-Janlabel = categories(categorical(Species{:,1})); % identify unique species names
-Jancount = countcats(categorical(Species{:,1})); % count species occurrence
-
-pie(Jancount)
-legend(Janlabel)
+% Print pie charts for each month
+for i = 1:12
+    figure(i)
+    pie(countcats(categorical(Species{:,i}))); % make pie chart
+    legend(categories(categorical(Species{:,i}))) % make legend
+    title(datestr(datetime(1,i,1),'mmmm') + " bird diversity (2020 - 2023)") % make title
+end
