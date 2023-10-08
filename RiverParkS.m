@@ -1,4 +1,6 @@
 %% Point Plotting
+close all
+clear
 clf
 data = readtable('RiverParkData.csv'); % import data
 coord = table2array(data(:,2:3)); % create coordinates array (lat, lon)
@@ -40,4 +42,21 @@ for i = 1:12
     pie(countcats(categorical(Species{:,i}))); % make pie chart
     legend(categories(categorical(Species{:,i}))) % make legend
     title(datestr(datetime(1,i,1),'mmmm') + " bird diversity (2020 - 2023)") % make title
+end
+
+% Pops out pie slice of a specific bird of interest 
+for i = 1:12
+    figure(i) % make new figure for each pie chart
+    drawnow
+    X = categorical(Species{:,i}); 
+    if height(find(ismember(X,'Falco peregrinus'))) > 0 % check if bird exists in month
+        explode = {'Falco peregrinus'}; % declare species of interest
+        pie(X,explode); % make pie chart
+        legend(categories(categorical(Species{:,i}))) % make legend
+        title(datestr(datetime(1,i,1),'mmmm') + " bird diversity (2020 - 2023)") % make title
+    else
+        pie(X); % make pie chart
+        legend(categories(categorical(Species{:,i}))) % make legend
+        title(datestr(datetime(1,i,1),'mmmm') + " bird diversity (2020 - 2023)") % make title
+    end
 end
