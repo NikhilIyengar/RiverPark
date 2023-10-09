@@ -74,7 +74,7 @@ end
 bar(SpecCount) % print bar graph
 set(gca,'xtick',1:12,...
  'xticklabel',{'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'}) % label x-axis with months
-title("Bird population by month (2020-2023)")
+title("Bird sightings by month (2020-2023)")
 ylabel("# of birds")
 xlabel("Month")
 
@@ -92,18 +92,19 @@ end
 bar(Bushtit)
 set(gca,'xtick',1:12,...
  'xticklabel',{'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'}) % label x-axis with months
-title("Bushtit population by month (2020-2023)")
+title("Bushtit sightings by month (2020-2023)")
 ylabel("# of birds")
 xlabel("Month")
 
 bar(Hawk)
 set(gca,'xtick',1:12,...
  'xticklabel',{'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'}) % label x-axis with months
-title("Cooper's hawk population by month (2020-2023)")
+title("Cooper's hawk sightings by month (2020-2023)")
 ylabel("# of birds")
 xlabel("Month")
 
-% Stacked bar chart (here, bushtit vs Cooper's hawk populations)
+%% Stacked bar chart 
+% here, bushtit vs Cooper's hawk populations
 
 b1 = bar(Bushtit,'stacked'); % graph bushtit data
 set(gca,'nextplot','add') % graph next dataset on top of former graph
@@ -116,5 +117,22 @@ set(gca,'xtick',1:12,...
  'xticklabel',{'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'}) % label x-axis with months
 title("Bushtit to Cooper's Hawk (2020-2023)")
 ylabel("# of birds")
+xlabel("Month")
+legend("Bushtit","Cooper's hawk")
+
+%% Group bar chart
+% here, bushtit vs Cooper's hawk populations
+
+BushtitHawk = zeros(12,2); % initialize matrix
+for i = 1:12
+    BushtitHawk(i,:) = [Bushtit(i),Hawk(i)]; % organize bushtit and hawk data into single matrix
+end
+
+bar(BushtitHawk) % make bar graph
+legend("Bushtit","Cooper's hawk")
+set(gca,'xtick',1:12,...
+ 'xticklabel',{'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'}) % label x-axis with months
+title("Bushtit to Cooper's Hawk (2020-2023)")
+ylabel("# of sightings")
 xlabel("Month")
 legend("Bushtit","Cooper's hawk")
