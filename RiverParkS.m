@@ -1,6 +1,6 @@
 %% Setup
 clear ; close all ; clf
-data = readtable('RiverParkData.csv'); % import data
+data = readtable('RiverParkData2.csv'); % import data
 
 %% Point Plotting
 coord = table2array(data(:,2:3)); % create coordinates array (lat, lon)
@@ -30,11 +30,23 @@ geobasemap topographic % display map type
 % Set up array of species count by month
 
 MonthArray = month(table2array(data(:,"observed_on"))); % Converts datetime to a single number indicating month
-SpeciesArray = table2array(data(:,"scientific_name")); % array of every species in dataset
+SpeciesArray = table2array(data(:,"common_name")); % array of every species in dataset
+SpecCat = string(unique(SpeciesArray)); % array of unique species names
 
-SpecbyMonth = cell(1,12); % preallocate species by month cell array
+SpecCell = cell(1,12); % preallocate species by month cell array
 for i = 1:12
-    SpecbyMonth{:,i} = SpeciesArray(MonthArray == i); % Sort species data by month
+    SpecCell{:,i} = SpeciesArray(MonthArray == i); % Sort species data by month
+end
+
+SpecStr = string(unique(SpeciesArray)); % string array of unique species names
+
+SpecNum = zeros(73,12); % preallocate species by month numeric array
+for i = 1:12
+    for j = 1:length(SpecStr)
+        idx = strfind(string(categorical(SpecCell{:,i})), SpecStr(j)); % checks SpecCell for occurrance of a species name
+        idx = find(not(cellfun('isempty', idx))); % checks SpecCell for lack of occurrance of a species name
+        SpecNum(j,i) = length(idx); % numeric array of species occurrence by month
+    end
 end
 
 %% Simple Pie Chart
@@ -42,8 +54,21 @@ end
 
 % Print pie charts for each month
 for i = 1:12
-    figure(i) % makes new figure
-    pie(countcats(categorical(SpecbyMonth{:,i}))); % make pie chart
+    figure
+
+    % make pie chart
+    notzero = find(SpecNum(:,i) ~= 0); % find non-zero species entries
+    pielabel = strings(size(SpecCat)); % preallocate species-within-month array
+    pielabel(notzero) = SpecCat(notzero); % species-within-month array
+    p = pie(SpecNum(:,i)); % print pie chart
+    
+    % remove 0% label from pie chart
+    tp = findobj(p,'Type','Text'); % assign tp as default string labels for pie chart
+    isSmall = startsWith({tp.String}, '0'); % find 0% labels
+    set(tp(isSmall),'String', '') % set 0% labels to blank strings
+
+    % label chart
+    legend(pielabel,'Location','eastoutside') % make legend only containing species detected in that month
     title(datestr(datetime(1,i,1),'mmmm') + " bird diversity (2020 - 2023)") % make title
 end
 
@@ -52,7 +77,7 @@ end
 
 for i = 1:12
     figure(i) % make new figure for each pie chart
-    X = categorical(SpecbyMonth{:,i}); 
+    X = categorical(SpecCell{:,i}); 
     if height(find(ismember(X,'Falco peregrinus'))) > 0 % check if bird exists in month
         explode = {'Falco peregrinus'}; % declare species of interest
         pie(X,explode); % make pie chart
@@ -68,7 +93,7 @@ end
 
 SpecCount = zeros(1,12); % initialize array
 for i = 1:12
-    SpecCount(i) = height(SpecbyMonth{:,i}); % counts how many entries are in each SpecbyMonth column
+    SpecCount(i) = height(SpecCell{:,i}); % counts how many entries are in each SpecbyMonth column
 end
 
 bar(SpecCount) % print bar graph
@@ -83,8 +108,8 @@ xlabel("Month")
 Bushtit = zeros(1,12); % initialize array
 Hawk = zeros(1,12) % initialize array
 for i = 1:12
-    titcount = find(strcmp(SpecbyMonth{:,i}, 'Psaltriparus minimus')); % count how many times bushtit is recorded per month
-    hawkcount = find(strcmp(SpecbyMonth{:,i}, 'Accipiter cooperii')); % count how many times Cooper's hawk is recorded per month
+    titcount = find(strcmp(SpecCell{:,i}, 'Psaltriparus minimus')); % count how many times bushtit is recorded per month
+    hawkcount = find(strcmp(SpecCell{:,i}, 'Accipiter cooperii')); % count how many times Cooper's hawk is recorded per month
     Bushtit(i) = length(titcount);
     Hawk(i) = length(hawkcount);
 end
