@@ -57,9 +57,6 @@ for i = 1:12
     figure
 
     % make pie chart
-    notzero = find(SpecNum(:,i) ~= 0); % find non-zero species entries
-    pielabel = strings(size(SpecCat)); % preallocate species-within-month array
-    pielabel(notzero) = SpecCat(notzero); % species-within-month array
     p = pie(SpecNum(:,i)); % print pie chart
     
     % remove 0% label from pie chart
@@ -68,6 +65,9 @@ for i = 1:12
     set(tp(isSmall),'String', '') % set 0% labels to blank strings
 
     % label chart
+    notzero = find(SpecNum(:,i) ~= 0); % find non-zero species entries
+    pielabel = strings(size(SpecCat)); % preallocate species-within-month array
+    pielabel(notzero) = SpecCat(notzero); % species-within-month array
     legend(pielabel,'Location','eastoutside') % make legend only containing species detected in that month
     title(datestr(datetime(1,i,1),'mmmm') + " bird diversity (2020 - 2023)") % make title
 end
